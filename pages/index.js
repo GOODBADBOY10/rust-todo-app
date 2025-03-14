@@ -123,7 +123,7 @@ const index = () => {
             <MdDelete />
           </i>
         </span>
-        <span className="span-button" onClick={() => editIndex(index)}>
+        <span className="span-button" onClick={() => editTodo(index)}>
           <i className="fa-solid fa-trash">
             <MdEdit />
           </i>
