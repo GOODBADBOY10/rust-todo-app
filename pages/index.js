@@ -5,6 +5,7 @@ import { format } from 'date-fns'
 
 
 // IMPORT COMPONENT
+import CheckBox from '../Components/CheckBox';
 
 
 const index = () => {
@@ -59,9 +60,7 @@ const index = () => {
       } else {
         //Update TODO
         const todoUpdate = { ...todos[editIndex], title: todoInput }
-        const response = await axios.put(`http://127.0.0.1:8080/todos/${todoUpdate.id}`, {
-          todoUpdate
-        });
+        const response = await axios.put(`http://127.0.0.1:8080/todos/${todoUpdate.id}`, todoUpdate);
         console.log(response);
         const updatedTodos = [...todos];
         updatedTodos[editIndex] = response.data
@@ -87,7 +86,7 @@ const index = () => {
   const toggleCompleted = async (index) => {
     try {
       const todoToUpdate = { ...todos[index], completed: !todos[index].completed };
-      const response = await axios.delete(`http://127.0.0.1:8080/todos/${todoToUpdate.id}`);
+      const response = await axios.put(`http://127.0.0.1:8080/todos/${todoToUpdate.id}`, todoToUpdate);
       const updatedTodos = [...todos];
       updatedTodos[index] = response.data
       setTodos(updatedTodos)
@@ -114,6 +113,7 @@ const index = () => {
   const renderTodos = (todosTorender) => {
     return todosTorender.map((todo, index) => (
       <li key={index} className="li">
+        <CheckBox toggleCompleted={toggleCompleted} todo={todo} index={index} />
         <label htmlFor="" className="form-check-label"></label>
         <span className="todo-text">
           {`${todo.title} ${formatDate(todo.created_at)} `}
@@ -134,13 +134,13 @@ const index = () => {
 
   // FILTER
   const onHandleSearch = (value) => {
-    const filteredTodo = todos.filter((title) => title.toLowerCase().includes(value.toLowerCase()));
+    const filteredTodo = todos.filter(({ title }) => title.toLowerCase().includes(value.toLowerCase()));
     if(filteredTodo.length === 0) {
       setTodos(todosCopy)
     } else {
       setTodos(filteredTodo)
     }
-  }
+  };
 
 
   const onClearSearch = () => {
@@ -156,7 +156,7 @@ const index = () => {
 
   useEffect(() => {
     if (search) {
-      onHandleSearch()
+      onHandleSearch(search);
     } else {
       onClearSearch();
     }
